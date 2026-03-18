@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O Algoritmo Invisível — tema amber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant:wght@600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0d0c0a;
+      --surface:     #131210;
+      --surface-2:   #181612;
+      --surface-3:   #1f1c17;
+      --border:      #2a2620;
+      --border-2:    #332e27;
+      --amber:       #c8913a;
+      --amber-dim:   #8f6328;
+      --amber-glow:  rgba(200,145,58,.15);
+      --amber-glow2: rgba(200,145,58,.06);
+      --gold:        #e0b96a;
+      --text:        #d4c9b8;
+      --text-dim:    #8a8070;
+      --text-muted:  #4a4540;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.9;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(1.5rem, 5vw, 3rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+    }
+
+    .site-header__logo {
+      font-family: 'Cormorant', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--amber);
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .site-header__logo::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--amber);
+      border-radius: 50%;
+      display: block;
+    }
+
+    .site-header__tag {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--surface-3);
+      border: 1px solid var(--border-2);
+      padding: 3px 10px;
+      border-radius: 3px;
+    }
+
+    /* ── ESSAY WRAP ── */
+    .essay-wrap {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 7rem;
+    }
+
+    .essay-kicker {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-bottom: 1.2rem;
+    }
+
+    .essay-title {
+      font-family: 'Cormorant', serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.8rem;
+      color: var(--gold);
+    }
+
+    .essay-subtitle {
+      font-size: 1.1rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+    }
+
+    .essay-meta {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .essay-meta-dot { color: var(--border-2); }
+
+    hr.essay-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    .essay-body p { margin-bottom: 1.5rem; }
+
+    .essay-body > p:first-of-type::first-letter {
+      font-family: 'Cormorant', serif;
+      font-size: 4.2rem;
+      font-weight: 700;
+      float: left;
+      line-height: 0.8;
+      margin: 0.06em 0.1em 0 0;
+      color: var(--amber);
+    }
+
+    h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin: 3.5rem 0 1.2rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    code {
+      background: var(--surface-3);
+      border: 1px solid var(--border-2);
+      border-radius: 4px;
+      padding: 0.1rem 0.35rem;
+      font-size: 0.82em;
+      font-family: 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+      color: var(--amber);
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--amber-dim);
+      border-radius: 6px;
+      padding: 1.2rem 1.4rem;
+      overflow-x: auto;
+      margin: 2rem 0;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-size: 0.85rem;
+      color: #b0a898;
+    }
+
+    /* ── BLOCOS ── */
+    .essay-explainer,
+    .essay-note,
+    .essay-warning,
+    .essay-concept {
+      padding: 1.1rem 1.4rem;
+      margin: 2rem 0;
+      border-left: 2px solid var(--border-2);
+      background: var(--surface-2);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .essay-explainer { border-left-color: var(--amber-dim); background: var(--amber-glow2); }
+    .essay-note      { border-left-color: #4a7a9b; background: rgba(74,122,155,0.06); }
+    .essay-warning   { border-left-color: #8a4040; background: rgba(138,64,64,0.06); }
+    .essay-concept   { border-left-color: var(--border-2); }
+
+    .essay-block-label {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .essay-explainer .essay-block-label { color: var(--amber-dim); }
+    .essay-note      .essay-block-label { color: #4a7a9b; }
+    .essay-warning   .essay-block-label { color: #8a4040; }
+
+    .essay-pullquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.6;
+      border-left: 2px solid var(--amber);
+      padding: 0.5rem 0 0.5rem 1.5rem;
+      margin: 2.5rem 0;
+      color: var(--gold);
+      background: linear-gradient(to right, var(--amber-glow2), transparent);
+    }
+
+    .essay-pullquote cite {
+      display: block;
+      margin-top: 0.8rem;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.62rem;
+      font-style: normal;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .essay-aside {
+      margin: 2rem 0;
+      padding: 1rem 1.3rem;
+      border: 1px dashed var(--border-2);
+      border-radius: 6px;
+      color: var(--text-dim);
+      font-size: 0.96rem;
+      font-style: italic;
+      background: rgba(255,255,255,0.01);
+    }
+
+    .essay-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-style: italic;
+      margin: 2.5rem 0 1.2rem;
+      color: var(--gold);
+      opacity: 0.8;
+    }
+
+    .essay-timeline {
+      margin: 1.8rem 0;
+      padding: 0;
+      list-style: none;
+      border-left: 1px solid var(--border);
+      margin-left: 0.4rem;
+    }
+
+    .essay-timeline li {
+      position: relative;
+      padding: 0.15rem 0 0.9rem 1.4rem;
+    }
+
+    .essay-timeline li::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 0.64rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--amber-dim);
+      box-shadow: 0 0 6px var(--amber-glow);
+    }
+
+    .essay-footnote-line {
+      border: none;
+      border-top: 1px solid var(--border);
+      width: 30%;
+      margin: 3.5rem 0 1.2rem;
+    }
+
+    .essay-footnote {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__logo">ToddyMarkDown</div>
+    <span class="site-header__tag">tema: amber</span>
+  </header>
+
+  <div class="essay-wrap">
+    <p class="essay-kicker">Ciência &amp; Tecnologia</p>
+    <h1 class="essay-title">O Algoritmo Invisível que Governa o Mundo</h1>
+    <p class="essay-subtitle">Um exemplo completo de Markdown estendido com blocos editoriais customizados.</p>
+    <div class="essay-meta">
+      <span>Matheus Toddy</span>
+      <span class="essay-meta-dot">·</span>
+      <span>8 min de leitura</span>
+      <span class="essay-meta-dot">·</span>
+      <span>16 mar 2026</span>
+    </div>
+
+    <div class="essay-body">
+      <p>Em 1805, Carl Friedrich Gauss estava com um problema de astronomia na cabeça. Este documento demonstra como um Markdown estendido pode continuar legível em estado bruto e, ao mesmo tempo, servir de fonte para uma renderização HTML muito mais rica visualmente.</p>
+
+      <div class="essay-explainer">
+        <div class="essay-block-label">O que este documento demonstra?</div>
+        <p>Este arquivo mostra uma proposta de sintaxe híbrida.</p>
+        <p>Ela preserva o que o Markdown já faz bem — títulos, parágrafos, listas, citações e código — e adiciona apenas os blocos que realmente fazem falta para uma apresentação editorial mais sofisticada.</p>
+      </div>
+
+      <h2>A ideia central</h2>
+
+      <p>Markdown é excelente como formato de escrita, versionamento e organização. O problema dele não é estrutural; é visual. Seu poder cresce muito quando passa a alimentar um template HTML com CSS.</p>
+
+      <div class="essay-pullquote">
+        "O melhor texto-fonte é o que continua legível mesmo antes da renderização."
+        <cite>Princípio de projeto editorial</cite>
+      </div>
+
+      <div class="essay-aside">
+        Uma boa extensão de Markdown não deve competir com o Markdown. Ela deve apenas completar os pontos em que ele é economicamente insuficiente.
+      </div>
+
+      <h2>Conceitos principais</h2>
+
+      <div class="essay-concept">
+        <div class="essay-block-label">Frontmatter</div>
+        <p>Bloco de metadados no topo do documento usado para armazenar informações como título, subtítulo, autor, categoria, data e tema visual.</p>
+      </div>
+
+      <div class="essay-concept">
+        <div class="essay-block-label">Bloco customizado</div>
+        <p>Estrutura delimitada por <code>:::</code> usada para representar componentes semânticos especiais, como caixas didáticas, citações destacadas e sínteses.</p>
+      </div>
+
+      <div class="essay-question">O que deve virar sintaxe nova, e o que deve continuar sendo apenas Markdown normal?</div>
+
+      <p>A resposta mais saudável é: só vale criar sintaxe nova para aquilo que o Markdown realmente não consegue expressar com clareza suficiente.</p>
+
+      <h2>Um pequeno fluxo de compilação</h2>
+
+      <ul class="essay-timeline">
+        <li>Escrita — o autor produz o conteúdo em <code>.md</code>.</li>
+        <li>Parsing — o sistema lê frontmatter e blocos especiais.</li>
+        <li>Transformação — o parser converte o conteúdo para HTML semântico.</li>
+        <li>Renderização — o HTML recebe um template visual e CSS editorial.</li>
+      </ul>
+
+      <div class="essay-explainer">
+        <div class="essay-block-label">Síntese</div>
+        <p>O <code>.md</code> continua sendo a fonte de verdade; o <code>.html</code> é a visualização compilada.</p>
+      </div>
+
+      <h2>Exemplo de bloco de código</h2>
+
+      <pre><code>import fs from "fs";
+import matter from "gray-matter";
+import markdownIt from "markdown-it";
+
+const md = markdownIt({ html: true });
+const raw = fs.readFileSync("ensaio.md", "utf-8");
+const { data, content } = matter(raw);
+const htmlContent = md.render(content);</code></pre>
+
+      <h2>Encerramento</h2>
+
+      <p>Esse tipo de sistema é útil para blogs, ensaios, documentação curada, páginas de estudo e bases de conhecimento que precisem unir boa escrita com boa apresentação visual.</p>
+
+      <div class="essay-note">
+        <div class="essay-block-label">Nota</div>
+        <p>Regra prática: se um recurso puder ser resolvido apenas com <code>##</code>, <code>&gt;</code>, listas ou código cercado por crases, mantenha em Markdown puro.</p>
+      </div>
+
+      <div class="essay-warning">
+        <div class="essay-block-label">Aviso</div>
+        <p>Quando a sintaxe customizada começa a parecer uma linguagem de programação paralela, o projeto já está escorregando para a selva ornamental.</p>
+      </div>
+    </div>
+
+    <hr class="essay-footnote-line" />
+    <p class="essay-footnote">Este HTML representa a saída compilada esperada a partir do Markdown estendido do exemplo.</p>
+  </div>
+
+</body>
+</html>

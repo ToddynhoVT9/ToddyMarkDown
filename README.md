@@ -28,8 +28,6 @@ _docs/
     theme-ink.html
     theme-modern.html
     theme-amber.html
-  _tmd-prompts/prompts-v1.0/
-    prompt00.md ... prompt12.md
 ```
 
 ## O que é TMD (resumo rápido)

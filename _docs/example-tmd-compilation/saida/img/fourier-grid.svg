@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#141414"/>
+  <g stroke="#353535" stroke-width="2">
+    <path d="M0 150H1200M0 300H1200M0 450H1200M0 600H1200M0 750H1200"/>
+    <path d="M150 0V900M300 0V900M450 0V900M600 0V900M750 0V900M900 0V900M1050 0V900"/>
+  </g>
+  <path d="M60 520 C 150 150, 260 150, 350 520 S 550 890, 640 520 840 150, 930 520 1050 890, 1140 520" fill="none" stroke="#8c7b68" stroke-width="10"/>
+  <text x="600" y="820" text-anchor="middle" fill="#f5f1e8" font-size="52" font-family="Georgia, serif">Onda e decomposição espectral</text>
+</svg>

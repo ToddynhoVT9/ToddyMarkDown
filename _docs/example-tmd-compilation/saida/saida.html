@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="essay">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O Algoritmo Invisível que Governa o Mundo</title>
+  <link rel="stylesheet" href="./saida.css" />
+</head>
+<body>
+  <header class="tmd-site-header">
+    <div class="tmd-site-header-inner">
+      <div class="tmd-brand">ToddyMarkDown · saída de exemplo</div>
+      <div class="tmd-theme-switcher">
+        <button class="tmd-theme-btn" data-theme-target="essay">essay</button>
+        <button class="tmd-theme-btn" data-theme-target="ink">ink</button>
+        <button class="tmd-theme-btn" data-theme-target="modern">modern</button>
+        <button class="tmd-theme-btn" data-theme-target="amber">amber</button>
+      </div>
+    </div>
+  </header>
+
+  <article class="tmd-document">
+    <header class="tmd-header">
+      <p class="tmd-kicker">Ciência &amp; Tecnologia</p>
+      <h1 class="tmd-title">O Algoritmo Invisível que Governa o Mundo</h1>
+      <p class="tmd-subtitle">Exemplo editorial completo refatorado para obedecer à sintaxe oficial do ToddyMarkDown.</p>
+      <p class="tmd-author">Por Matheus Toddy</p>
+    </header>
+
+    <p>Em 1805, <strong>Carl Friedrich Gauss</strong> estava com um problema de astronomia na cabeça. Nesta versão refatorada, o documento deixa de usar a sintaxe antiga em <code>:::</code> e passa a obedecer ao formato oficial do <strong>ToddyMarkDown</strong>, preservando legibilidade em estado bruto e permitindo uma saída HTML editorialmente rica.</p>
+
+    <p>|&gt;! [Isto não abre um bloco]</p>
+
+    <pre class="tmd-literal">Tudo aqui dentro deve permanecer literal.
+|&gt;## [Não interpretar]
+Nem esta linha deve virar sintaxe especial.</pre>
+
+    <section class="tmd-block tmd-block-explainer">
+      <h3 class="tmd-block-title">O que este documento demonstra?</h3>
+      <div class="tmd-block-content">
+        <p>Este arquivo mostra uma proposta de sintaxe híbrida e <strong>estritamente compatível</strong> com as specs.</p>
+        <p>Ela preserva o que o Markdown já faz bem — títulos, parágrafos, listas, citações e código — e adiciona apenas os blocos que realmente fazem falta para uma apresentação editorial mais sofisticada.</p>
+      </div>
+    </section>
+
+    <h2>A ideia central</h2>
+    <p>Markdown é excelente como formato de escrita, versionamento e organização. O problema dele não é estrutural; é visual. Seu poder cresce muito quando passa a alimentar um template HTML com CSS.</p>
+
+    <figure class="tmd-block tmd-block-pullquote">
+      <blockquote class="tmd-pullquote-text">
+        <p>"O melhor texto-fonte é o que continua legível mesmo antes da renderização."</p>
+      </blockquote>
+      <figcaption class="tmd-pullquote-author">Princípio de projeto editorial</figcaption>
+    </figure>
+
+    <aside class="tmd-block tmd-block-aside">
+      <div class="tmd-block-content">
+        <p>Uma boa extensão de Markdown não deve competir com o Markdown. Ela deve apenas completar os pontos em que ele é economicamente insuficiente.</p>
+      </div>
+    </aside>
+
+    <h2>Conceitos principais</h2>
+
+    <section class="tmd-block tmd-block-concept">
+      <h3 class="tmd-block-title">Frontmatter</h3>
+      <div class="tmd-block-content">
+        <p>Bloco de metadados no topo do documento usado para armazenar informações como <strong>título</strong>, <strong>subtítulo</strong>, <strong>autor</strong>, <strong>categoria</strong>, <strong>tema</strong> e <strong>modo de compilação</strong>.</p>
+      </div>
+    </section>
+
+    <section class="tmd-block tmd-block-concept">
+      <h3 class="tmd-block-title">Bloco customizado</h3>
+      <div class="tmd-block-content">
+        <p>Estrutura delimitada por <code>|&gt;</code> e <code>&lt;|</code> usada para representar componentes semânticos especiais, como caixas didáticas, citações destacadas, sínteses e composições com imagem.</p>
+      </div>
+    </section>
+
+    <section class="tmd-block tmd-block-question">
+      <div class="tmd-block-content">
+        <p>O que deve virar sintaxe nova, e o que deve continuar sendo apenas Markdown normal?</p>
+      </div>
+    </section>
+
+    <p>A resposta mais saudável é: só vale criar sintaxe nova para aquilo que o Markdown realmente não consegue expressar com clareza suficiente.</p>
+
+    <section class="tmd-block tmd-block-note">
+      <h3 class="tmd-block-title">Nota prática</h3>
+      <div class="tmd-block-content">
+        <p>Se um recurso puder ser resolvido apenas com <code>##</code>, <code>&gt;</code>, listas ou código cercado por crases, ele provavelmente deve continuar em Markdown puro.</p>
+      </div>
+    </section>
+
+    <section class="tmd-block tmd-block-warning">
+      <h3 class="tmd-block-title">Aviso de projeto</h3>
+      <div class="tmd-block-content">
+        <p>Quando a sintaxe customizada começa a parecer uma linguagem de programação paralela, o projeto já está escorregando para a selva ornamental.</p>
+      </div>
+    </section>
+
+    <h2>Um pequeno fluxo de compilação</h2>
+
+    <section class="tmd-block tmd-block-timeline">
+      <h3 class="tmd-block-title">Linha do tempo do documento</h3>
+      <div class="tmd-timeline">
+        <div class="tmd-timeline-item">
+          <div class="tmd-timeline-marker"></div>
+          <div class="tmd-timeline-content">
+            <p class="tmd-timeline-event">Escrita — o autor produz o conteúdo em <code>.tmd</code>.</p>
+          </div>
+        </div>
+        <div class="tmd-timeline-item tmd-timeline-item-markdown">
+          <div class="tmd-timeline-marker"></div>
+          <div class="tmd-timeline-content">
+            <p>Texto intermediário em markdown normal, ainda ligado visualmente à mesma linha histórica do processo.</p>
+          </div>
+        </div>
+        <div class="tmd-timeline-item">
+          <div class="tmd-timeline-marker"></div>
+          <div class="tmd-timeline-content">
+            <p class="tmd-timeline-event">Parsing — o sistema lê frontmatter, escapes, blocos literais e blocos especiais.</p>
+          </div>
+        </div>
+        <div class="tmd-timeline-item">
+          <div class="tmd-timeline-marker"></div>
+          <div class="tmd-timeline-content">
+            <p class="tmd-timeline-event">Transformação — o parser converte a AST para HTML semântico.</p>
+          </div>
+        </div>
+        <div class="tmd-timeline-item">
+          <div class="tmd-timeline-marker"></div>
+          <div class="tmd-timeline-content">
+            <p class="tmd-timeline-event">Renderização — o HTML recebe um template visual e CSS editorial.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tmd-block tmd-block-takeaway">
+      <div class="tmd-block-content">
+        <p>O <code>.tmd</code> continua sendo a fonte de verdade; o <code>.html</code> é a visualização compilada.</p>
+      </div>
+    </section>
+
+    <h2>Exemplo de bloco com imagem lateral</h2>
+
+    <section class="tmd-media-block tmd-media-block-right">
+      <h3 class="tmd-block-title">Gauss em composição lateral</h3>
+      <div class="tmd-media-block-inner">
+        <div class="tmd-media-content">
+          <p>No modo <code>*&gt;</code>, a imagem fica ao lado do texto, sem abraço. Isso favorece leitura estável, previsível e mais fácil de implementar em layouts responsivos.</p>
+          <ul>
+            <li>bom para documentação técnica</li>
+            <li>bom para ensaios com legenda forte</li>
+            <li>bom para evitar colisões de float</li>
+          </ul>
+        </div>
+        <figure class="tmd-media-figure">
+          <img src="./img/gauss.svg" alt="Retrato editorial de Gauss" class="tmd-media-image" />
+          <figcaption class="tmd-media-caption">Retrato editorial de Gauss</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="tmd-media-wrap tmd-media-wrap-right">
+      <h3 class="tmd-block-title">Onda à direita com abraço</h3>
+      <figure class="tmd-media-figure tmd-media-float-right">
+        <img src="./img/fourier-grid.svg" alt="Diagrama editorial de uma onda" class="tmd-media-image" />
+        <figcaption class="tmd-media-caption">Diagrama editorial de uma onda</figcaption>
+      </figure>
+      <div class="tmd-media-content">
+        <p>No modo <code>*&gt;wrap</code>, o texto <strong>abraça</strong> a imagem posicionada à direita. O efeito se aproxima mais de revistas diagramadas e de ensaios visuais.</p>
+        <p>Esse tipo de bloco é interessante quando a imagem serve como apoio visual contínuo, sem quebrar tanto o fluxo do parágrafo principal.</p>
+      </div>
+      <div class="tmd-clearfix"></div>
+    </section>
+
+    <section class="tmd-media-block tmd-media-block-left">
+      <h3 class="tmd-block-title">Imagem à esquerda sem abraço</h3>
+      <div class="tmd-media-block-inner">
+        <figure class="tmd-media-figure">
+          <img src="./img/gauss.svg" alt="Retrato editorial de Gauss" class="tmd-media-image" />
+          <figcaption class="tmd-media-caption">Retrato editorial de Gauss</figcaption>
+        </figure>
+        <div class="tmd-media-content">
+          <p>No modo <code>*&lt;</code>, a imagem vai para a esquerda, ainda sem abraço. É útil quando se quer variar o ritmo visual da página sem trocar a lógica estrutural do componente.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tmd-media-wrap tmd-media-wrap-left">
+      <h3 class="tmd-block-title">Imagem à esquerda com abraço</h3>
+      <figure class="tmd-media-figure tmd-media-float-left">
+        <img src="./img/fourier-grid.svg" alt="Diagrama editorial de uma onda" class="tmd-media-image" />
+        <figcaption class="tmd-media-caption">Diagrama editorial de uma onda</figcaption>
+      </figure>
+      <div class="tmd-media-content">
+        <p>No modo <code>*&lt;wrap</code>, o texto abraça a imagem à esquerda. Esse é o modo mais "revista impressa" entre os quatro e exige mais cuidado com altura, largura e responsividade.</p>
+      </div>
+      <div class="tmd-clearfix"></div>
+    </section>
+
+    <h2>Markdown comum continua valendo</h2>
+
+    <blockquote>
+      <p>Uma boa linguagem de marcação editorial não substitui o pensamento do autor; ela apenas o transporta com menos atrito.</p>
+    </blockquote>
+
+    <p>Imagem markdown comum fora de bloco especial:</p>
+
+    <img src="./img/fourier-grid.svg" alt="Esquema visual de onda" />
+
+    <h3>Código de exemplo</h3>
+    <pre><code>import fs from "fs";
+import matter from "gray-matter";
+import markdownIt from "markdown-it";
+
+const md = markdownIt({ html: true });
+const raw = fs.readFileSync("ensaio.tmd", "utf-8");
+const { data, content } = matter(raw);
+const htmlContent = md.render(content);</code></pre>
+
+    <h2>Encerramento</h2>
+    <p>Esse tipo de sistema é útil para blogs, ensaios, documentação curada, páginas de estudo e bases de conhecimento que precisem unir boa escrita com boa apresentação visual.</p>
+  </article>
+
+  <script>
+    const saved = localStorage.getItem('tmd-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    document.querySelectorAll('.tmd-theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const t = btn.dataset.themeTarget;
+        document.documentElement.setAttribute('data-theme', t);
+        localStorage.setItem('tmd-theme', t);
+      });
+    });
+  </script>
+</body>
+</html>

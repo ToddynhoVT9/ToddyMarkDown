@@ -127,10 +127,4 @@ Exit codes previstos:
 4. `_docs/tmd-spec/tmd-cli-spec-v1.1.md`
 5. `_docs/tmd-spec/tmd-vscode-extension-specv1.2.md`
 
-## Roadmap de implementação
 
-Para implementar o ecossistema do zero, siga a sequência guiada:
-
-- `_docs/_tmd-prompts/prompts-v1.0/prompt00.md` até `prompt12.md`
-
-Esses prompts definem arquitetura, responsabilidades de módulos, testes e validação final.

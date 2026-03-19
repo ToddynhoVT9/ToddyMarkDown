@@ -1,0 +1,25 @@
+﻿{
+  "name": "tmd",
+  "version": "1.0.0",
+  "description": "ToddyMarkDown compiler",
+  "type": "module",
+  "bin": {
+    "tmd": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "markdown-it": "^14.0.0",
+    "chokidar": "^3.5.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "@types/markdown-it": "^14.0.0",
+    "vitest": "^1.0.0"
+  }
+}

@@ -1,0 +1,23 @@
+﻿---
+title: Teste Basico
+author: Autor Teste
+theme: essay
+compile: standalone
+---
+
+## Introducao
+
+Paragrafo de texto normal.
+
+|>! [O que e isso?]
+Um explainer simples.
+<|
+
+|>@
+"Uma citacao de teste."
+- Autor da Citacao
+<|
+
+|>+
+Um takeaway de sintese.
+<|

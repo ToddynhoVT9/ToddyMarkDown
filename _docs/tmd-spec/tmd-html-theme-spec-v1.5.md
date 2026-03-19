@@ -1,4 +1,4 @@
-# ToddyMarkDown (`.tmd`) — tmd-html-theme-spec v1.4
+# ToddyMarkDown (`.tmd`) — tmd-html-theme-spec v1.5
 
 ## Objetivo
 
@@ -13,6 +13,7 @@ Ele cobre:
 - temas visuais e princípios de composição
 - switcher de temas no header
 - convenções para responsividade
+- sistema de customização em níveis
 
 O foco aqui não é o parser nem o syntax highlight do editor. O foco é a camada de apresentação final.
 
@@ -46,7 +47,7 @@ Fluxo recomendado:
 2. parser TMD
 3. AST TMD
 4. renderizador HTML
-5. tema CSS (4 temas embutidos)
+5. tema CSS (4 temas embutidos + temas customizados)
 6. saída final `.html`
 
 O parser decide **o que o bloco é**.
@@ -165,39 +166,6 @@ modern   leitura digital — IBM Plex Sans, escuro, acento violeta #7c6aff
 amber    editor literário — Cormorant Garamond + Raleway, escuro quente, acento âmbar #c8913a
 ```
 
-### Temas customizados via `.config.tmd.json`
-
-Além dos quatro temas base, o compilador carrega temas customizados definidos no `.config.tmd.json` na raiz do projeto.
-
-Temas customizados são do **nível 1**: só sobrescrevem variáveis CSS do tema base declarado em `extends`. A estrutura HTML permanece idêntica.
-
-No modo `standalone`, os temas customizados são adicionados ao `.css` como blocos `[data-theme]` adicionais. No modo `fragment`, como blocos `.tmd-theme-{nome}` adicionais.
-
-Exemplo de tema customizado no CSS gerado (modo standalone):
-
-```css
-[data-theme="midnight"] {
-  /* herda todas as vars de essay */
-  --tmd-bg:        #080810;
-  --tmd-accent:    #a78bfa;
-  --tmd-text:      #e8e8f0;
-  --tmd-font-body: 'Inter', sans-serif;
-}
-```
-
-Cada tema deve definir ao menos:
-
-```css
---tmd-bg
---tmd-surface
---tmd-text
---tmd-text-soft
---tmd-border
---tmd-accent
---tmd-font-body
---tmd-font-heading
-```
-
 ### Switcher adaptativo
 
 O switcher no header usa `var(--tmd-accent)`, `var(--tmd-text)` e `var(--tmd-border)` para herdar a identidade do tema ativo automaticamente. Não possui estilo fixo próprio.
@@ -218,9 +186,339 @@ O switcher no header usa `var(--tmd-accent)`, `var(--tmd-text)` e `var(--tmd-bor
 
 ---
 
-## Estrutura global sugerida
+# Sistema de customização em níveis
 
-### Container principal
+ToddyMarkDown define quatro níveis de customização visual. A restrição aumenta conforme o escopo diminui: o nível de projeto tem mais liberdade que o nível de bloco; o CSS externo não tem restrição nenhuma, mas exige opt-in explícito.
+
+```
+Nível 0 — temas base (imutáveis)
+Nível 1 — variáveis globais de aparência (.config.tmd.json)
+Nível 2 — propriedades por tipo de bloco (.config.tmd.json)
+Nível 3 — CSS externo, opt-in explícito no config
+```
+
+Os níveis 1 e 2 coexistem no mesmo arquivo e no mesmo bloco de tema. O usuário não precisa pensar em "níveis" — escreve um tema com duas seções (`overrides` e `blocks`) e o compilador trata cada uma com sua whitelist correspondente.
+
+---
+
+## Nível 0 — Temas base
+
+Os quatro temas embutidos (`essay`, `ink`, `modern`, `amber`) são imutáveis. O compilador sempre os gera no CSS de saída. Não podem ser removidos, renomeados ou alterados via configuração.
+
+---
+
+## Nível 1 — Variáveis globais de tema
+
+Definido na chave `overrides` de cada tema em `.config.tmd.json`. Permite sobrescrever variáveis CSS globais de aparência herdadas do tema base declarado em `extends`.
+
+### Whitelist do nível 1
+
+| Propriedade | Tipo | Restrição de valor |
+|---|---|---|
+| `bg` | cor | `hex`, `rgb()`, `hsl()` |
+| `surface` | cor | `hex`, `rgb()`, `hsl()` |
+| `text` | cor | `hex`, `rgb()`, `hsl()` |
+| `text-soft` | cor | `hex`, `rgb()`, `hsl()` |
+| `accent` | cor | `hex`, `rgb()`, `hsl()` |
+| `border` | cor | `hex`, `rgb()`, `hsl()` |
+| `font-body` | font-stack | string CSS válida |
+| `font-heading` | font-stack | string CSS válida |
+| `radius` | tamanho | `px` ou `rem` apenas |
+
+### Propriedades bloqueadas no nível 1
+
+| Propriedade | Motivo |
+|---|---|
+| `--tmd-max-width` | legibilidade tipográfica, não é estética |
+| `--tmd-gap` | consistência estrutural de layout |
+| `--tmd-warning` | cor semântica funcional |
+| `--tmd-note` | cor semântica funcional |
+
+### Exemplo
+
+```json
+{
+  "themes": {
+    "midnight": {
+      "extends": "essay",
+      "overrides": {
+        "bg":          "#080810",
+        "surface":     "#10101a",
+        "text":        "#e8e8f0",
+        "text-soft":   "#9090a8",
+        "accent":      "#a78bfa",
+        "border":      "#2a2a3a",
+        "font-body":   "Inter, sans-serif",
+        "font-heading":"Inter, sans-serif",
+        "radius":      "8px"
+      }
+    }
+  }
+}
+```
+
+### CSS gerado (modo standalone)
+
+```css
+[data-theme="midnight"] {
+  --tmd-bg:          #080810;
+  --tmd-surface:     #10101a;
+  --tmd-text:        #e8e8f0;
+  --tmd-text-soft:   #9090a8;
+  --tmd-accent:      #a78bfa;
+  --tmd-border:      #2a2a3a;
+  --tmd-font-body:   Inter, sans-serif;
+  --tmd-font-heading:Inter, sans-serif;
+  --tmd-radius:      8px;
+}
+```
+
+Propriedades ausentes em `overrides` herdam o valor do tema base declarado em `extends`.
+
+---
+
+## Nível 2 — Propriedades por tipo de bloco
+
+Definido na chave `blocks` do mesmo tema em `.config.tmd.json`. Permite customizar a aparência de blocos individuais sem afetar as variáveis globais.
+
+A whitelist do nível 2 é mais estreita que a do nível 1: apenas propriedades com impacto visual localizado no bloco são permitidas.
+
+### Whitelist do nível 2
+
+| Propriedade | Blocos que aceitam | Tipo |
+|---|---|---|
+| `border-color` | todos os blocos de conteúdo | cor |
+| `bg` | `explainer`, `note`, `warning`, `concept`, `aside` | cor |
+| `marker-color` | `timeline` apenas | cor |
+
+### Blocos de conteúdo válidos para `blocks`
+
+```txt
+explainer  note  warning  question  takeaway  concept  aside  pullquote  timeline
+```
+
+### Propriedades ausentes da whitelist do nível 2 e motivos
+
+| Propriedade | Motivo |
+|---|---|
+| `text-color` por bloco | risco de acessibilidade; controlado globalmente |
+| `font` por bloco | caos tipográfico; controlado globalmente |
+| `radius` por bloco | variável global já cobre; granularidade desnecessária |
+| `padding`, `margin` | estrutural; fora do escopo de tema |
+
+### Exemplo
+
+```json
+{
+  "themes": {
+    "midnight": {
+      "extends": "essay",
+      "overrides": {
+        "bg":     "#080810",
+        "accent": "#a78bfa"
+      },
+      "blocks": {
+        "warning":  { "border-color": "#e07b3a", "bg": "#1f1508" },
+        "note":     { "border-color": "#5b8dd9", "bg": "#0d1520" },
+        "concept":  { "border-color": "#6dbf8a", "bg": "#0b1a10" },
+        "pullquote":{ "border-color": "#a78bfa" },
+        "timeline": { "marker-color": "#c8913a" }
+      }
+    }
+  }
+}
+```
+
+### CSS gerado (modo standalone)
+
+O compilador gera variáveis CSS com escopo por seletor de tema e classe de bloco:
+
+```css
+[data-theme="midnight"] .tmd-block-warning {
+  --tmd-block-border-color: #e07b3a;
+  --tmd-block-bg:           #1f1508;
+}
+
+[data-theme="midnight"] .tmd-block-note {
+  --tmd-block-border-color: #5b8dd9;
+  --tmd-block-bg:           #0d1520;
+}
+
+[data-theme="midnight"] .tmd-block-concept {
+  --tmd-block-border-color: #6dbf8a;
+  --tmd-block-bg:           #0b1a10;
+}
+
+[data-theme="midnight"] .tmd-block-pullquote {
+  --tmd-block-border-color: #a78bfa;
+}
+
+[data-theme="midnight"] .tmd-timeline-marker {
+  background: #c8913a;
+}
+```
+
+### Variáveis CSS de bloco usadas no CSS base
+
+Os blocos de conteúdo devem referenciar as variáveis de bloco quando disponíveis, com fallback para as variáveis globais:
+
+```css
+.tmd-block-explainer,
+.tmd-block-note,
+.tmd-block-warning,
+.tmd-block-concept {
+  border-left-color: var(--tmd-block-border-color, var(--tmd-accent));
+  background:        var(--tmd-block-bg, var(--tmd-surface-soft));
+}
+
+.tmd-block-pullquote {
+  border-left-color: var(--tmd-block-border-color, var(--tmd-accent));
+}
+
+.tmd-timeline-marker {
+  background: var(--tmd-block-marker-color, var(--tmd-accent));
+}
+```
+
+Esse padrão garante que blocos sem `blocks` definidos no tema continuem funcionando corretamente via fallback.
+
+### Tema com apenas `overrides` (nível 2 opcional)
+
+A chave `blocks` é opcional. Um tema válido pode ter apenas `overrides`:
+
+```json
+{
+  "themes": {
+    "simples": {
+      "extends": "modern",
+      "overrides": {
+        "accent": "#e8a045"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Nível 3 — CSS externo
+
+Para autores que precisam de controle total sobre a apresentação, o compilador suporta injeção de um arquivo CSS externo. Este nível não tem whitelist nem validação de conteúdo.
+
+### Habilitação
+
+O nível 3 requer opt-in explícito no `.config.tmd.json`:
+
+```json
+{
+  "allowExternalCSS": true
+}
+```
+
+Sem essa chave, o campo `custom_css` no frontmatter é **ignorado com warning** no output do compilador. Nenhum CSS externo é injetado silenciosamente.
+
+### Uso no frontmatter
+
+Com `allowExternalCSS: true` habilitado no config:
+
+```yaml
+---
+title: Meu Artigo
+author: Fulano
+theme: essay
+custom_css: ./themes/meu-tema.css
+---
+```
+
+### Comportamento do compilador
+
+O arquivo referenciado em `custom_css` é injetado como `<link>` adicional **após** o CSS gerado, no modo `standalone`:
+
+```html
+<head>
+  <link rel="stylesheet" href="./titulo.css" />
+  <link rel="stylesheet" href="./themes/meu-tema.css" />
+</head>
+```
+
+No modo `fragment`, o compilador emite um comentário no HTML indicando que um CSS externo foi referenciado mas não pode ser embutido automaticamente.
+
+### Responsabilidades do autor no nível 3
+
+- compatibilidade com o HTML gerado pelo compilador
+- acessibilidade e contraste
+- comportamento em múltiplos temas, se aplicável
+- qualquer conflito com o CSS base gerado
+
+O compilador não valida, não sanitiza e não reporta erros de CSS externo.
+
+---
+
+## Exemplo completo de `.config.tmd.json`
+
+```json
+{
+  "defaultCompile": "standalone",
+  "allowExternalCSS": false,
+  "themes": {
+    "midnight": {
+      "extends": "essay",
+      "overrides": {
+        "bg":          "#080810",
+        "surface":     "#10101a",
+        "text":        "#e8e8f0",
+        "text-soft":   "#9090a8",
+        "accent":      "#a78bfa",
+        "border":      "#2a2a3a",
+        "font-body":   "Inter, sans-serif",
+        "font-heading":"Inter, sans-serif",
+        "radius":      "8px"
+      },
+      "blocks": {
+        "warning":  { "border-color": "#e07b3a", "bg": "#1f1508" },
+        "note":     { "border-color": "#5b8dd9", "bg": "#0d1520" },
+        "concept":  { "border-color": "#6dbf8a", "bg": "#0b1a10" },
+        "pullquote":{ "border-color": "#a78bfa" },
+        "timeline": { "marker-color": "#c8913a" }
+      }
+    },
+    "clean": {
+      "extends": "modern",
+      "overrides": {
+        "accent": "#e8a045",
+        "radius": "4px"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Validação pelo compilador
+
+O compilador valida os temas customizados no momento da compilação e emite erros claros.
+
+### Erros fatais (compilação interrompida)
+
+- `extends` ausente ou referenciando tema inexistente
+- propriedade em `overrides` fora da whitelist do nível 1
+- propriedade em `blocks` fora da whitelist do nível 2
+- bloco em `blocks` com nome inválido (fora da lista de tipos reconhecidos)
+- valor de cor com formato inválido (não é `hex`, `rgb()` ou `hsl()`)
+- valor de `radius` com unidade inválida (não é `px` ou `rem`)
+
+### Warnings (compilação continua)
+
+- `custom_css` no frontmatter com `allowExternalCSS: false` → warning + campo ignorado
+- arquivo referenciado em `custom_css` não encontrado → warning + `<link>` omitido
+- tema customizado com nome igual a um tema base → warning + tema customizado ignorado
+
+---
+
+# Estrutura global sugerida
+
+## Container principal
 
 ```html
 <article class="tmd-document">
@@ -859,17 +1157,17 @@ body {
 .tmd-block-warning,
 .tmd-block-concept {
   padding: 1rem 1.2rem;
-  border-left: 3px solid var(--tmd-accent);
+  border-left: 3px solid var(--tmd-block-border-color, var(--tmd-accent));
   border-radius: 0 var(--tmd-radius) var(--tmd-radius) 0;
-  background: var(--tmd-surface-soft);
+  background: var(--tmd-block-bg, var(--tmd-surface-soft));
 }
 
 .tmd-block-note {
-  border-left-color: var(--tmd-note);
+  border-left-color: var(--tmd-block-border-color, var(--tmd-note));
 }
 
 .tmd-block-warning {
-  border-left-color: var(--tmd-warning);
+  border-left-color: var(--tmd-block-border-color, var(--tmd-warning));
 }
 ```
 
@@ -881,7 +1179,7 @@ body {
 .tmd-block-pullquote {
   margin: 2.5rem 0;
   padding-left: 1.2rem;
-  border-left: 3px solid var(--tmd-accent);
+  border-left: 3px solid var(--tmd-block-border-color, var(--tmd-accent));
 }
 
 .tmd-pullquote-text {
@@ -931,7 +1229,7 @@ body {
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 50%;
-  background: var(--tmd-accent);
+  background: var(--tmd-block-marker-color, var(--tmd-accent));
 }
 
 .tmd-timeline-content {
@@ -1077,7 +1375,7 @@ Exemplo:
     "title": "Fourier",
     "subtitle": "Matemática invisível",
     "author": "Matheus Toddy",
-    "theme": "essay"
+    "theme": "midnight"
   },
   "children": [
     {
@@ -1104,7 +1402,7 @@ Exemplo:
 ## Saída HTML esperada
 
 ```html
-<html data-theme="essay">
+<html data-theme="midnight">
 ...
 <article class="tmd-document">
   <header class="tmd-header">
@@ -1137,6 +1435,27 @@ Exemplo:
 </article>
 ```
 
+## CSS gerado para o tema `midnight` (trecho relevante)
+
+```css
+[data-theme="midnight"] {
+  --tmd-bg:          #080810;
+  --tmd-surface:     #10101a;
+  --tmd-text:        #e8e8f0;
+  --tmd-text-soft:   #9090a8;
+  --tmd-accent:      #a78bfa;
+  --tmd-border:      #2a2a3a;
+  --tmd-font-body:   Inter, sans-serif;
+  --tmd-font-heading:Inter, sans-serif;
+  --tmd-radius:      8px;
+}
+
+[data-theme="midnight"] .tmd-block-explainer {
+  --tmd-block-border-color: #a78bfa;
+  --tmd-block-bg:           #10101a;
+}
+```
+
 ---
 
 # Princípio de projeto do tema HTML/CSS
@@ -1148,12 +1467,23 @@ A camada visual de ToddyMarkDown deve:
 - evitar HTML ornamental demais
 - favorecer legibilidade longa
 - permitir múltiplos temas sem mudar o parser
+- expor customização progressiva sem expor complexidade desnecessária
 
 Em termos menos solenes: o HTML precisa servir ao texto, não tentar roubar a cena como um pavão de framework.
 
 ---
 
 # Changelog
+
+## v1.5
+- Sistema de customização em níveis documentado: Nível 0, 1, 2 e 3
+- Nível 1 (`overrides`): whitelist de 9 variáveis globais com tipos e restrições de valor explicitados; propriedades bloqueadas documentadas com motivos
+- Nível 2 (`blocks`): whitelist de propriedades por tipo de bloco (`border-color`, `bg`, `marker-color`); CSS gerado documentado com padrão de fallback via `var(--tmd-block-*, var(--tmd-*))
+- Nível 3 (CSS externo): opt-in explícito via `allowExternalCSS: true` no config; comportamento em modo `standalone` e `fragment` documentados
+- Variáveis CSS de bloco (`--tmd-block-border-color`, `--tmd-block-bg`, `--tmd-block-marker-color`) adicionadas ao CSS base com fallback para variáveis globais
+- Seção de validação adicionada: erros fatais e warnings distinguidos
+- Exemplo completo atualizado para uso de tema customizado (`midnight`) com CSS gerado correspondente
+- Exemplo de `.config.tmd.json` completo com dois temas (`midnight` e `clean`)
 
 ## v1.4
 - Bloco de erro de imagem adicionado: HTML e CSS para imagem não encontrada, com classe `.tmd-error-block-image`

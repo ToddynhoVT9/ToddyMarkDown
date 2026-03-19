@@ -1,2 +1,4 @@
 _relating/*
+!_relating/.gitkeep
 _docs/_tmd-prompts/*
+!_docs/_tmd-prompts/.gitkeep

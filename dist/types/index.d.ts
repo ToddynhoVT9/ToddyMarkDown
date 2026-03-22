@@ -1,9 +1,18 @@
-export type DiagnosticSeverity = "error" | "warning" | "info";
+export type DiagnosticSeverity = 'error' | 'warning' | 'info';
+export interface Position {
+    offset: number;
+    line: number;
+    column: number;
+}
+export interface SourceRange {
+    start: Position;
+    end: Position;
+}
 export interface Diagnostic {
     severity: DiagnosticSeverity;
     code: string;
     message: string;
-    line: number | null;
+    position: SourceRange | null;
     filePath: string;
     recoverable: boolean;
 }
@@ -42,55 +51,64 @@ export interface FrontmatterFields {
     compile?: string;
     custom_css?: string;
 }
-export type ImageMode = "*>" | "*>wrap" | "*<" | "*<wrap";
+export type ImageMode = '*>' | '*>wrap' | '*<' | '*<wrap';
 export interface MarkdownBlockNode {
-    type: "MarkdownBlock";
+    type: 'MarkdownBlock';
     raw: string;
+    position: SourceRange;
 }
 export interface LiteralBlockNode {
-    type: "LiteralBlock";
+    type: 'LiteralBlock';
     raw: string;
+    position: SourceRange;
 }
 export interface TimelineEventNode {
-    type: "TimelineEvent";
+    type: 'TimelineEvent';
     text: string;
+    position: SourceRange;
 }
 export interface TimelineMarkdownNode {
-    type: "TimelineMarkdown";
+    type: 'TimelineMarkdown';
     raw: string;
+    position: SourceRange;
 }
 export interface ContentBlockNode {
-    type: "ExplainerBlock" | "AsideBlock" | "NoteBlock" | "WarningBlock" | "QuestionBlock" | "TakeawayBlock" | "ConceptBlock";
+    type: 'ExplainerBlock' | 'AsideBlock' | 'NoteBlock' | 'WarningBlock' | 'QuestionBlock' | 'TakeawayBlock' | 'ConceptBlock';
     title: string | null;
     content: BodyNode[];
+    position: SourceRange;
 }
 export interface PullQuoteBlockNode {
-    type: "PullQuoteBlock";
+    type: 'PullQuoteBlock';
     title: string | null;
     quote: string;
     author: string | null;
+    position: SourceRange;
 }
 export interface TimelineBlockNode {
-    type: "TimelineBlock";
+    type: 'TimelineBlock';
     title: string | null;
     items: (TimelineEventNode | TimelineMarkdownNode)[];
+    position: SourceRange;
 }
 export interface ImageBlockNode {
-    type: "ImageBlock";
+    type: 'ImageBlock';
     mode: ImageMode;
     title: string | null;
     caption: string;
     src: string;
     content: BodyNode[];
+    position: SourceRange;
 }
 export interface ErrorBlockNode {
-    type: "ErrorBlock";
+    type: 'ErrorBlock';
     raw: string;
     diagnostics: Diagnostic[];
+    position: SourceRange;
 }
 export type BodyNode = MarkdownBlockNode | LiteralBlockNode | ContentBlockNode | PullQuoteBlockNode | TimelineBlockNode | ImageBlockNode | ErrorBlockNode;
 export interface DocumentNode {
-    type: "Document";
+    type: 'Document';
     frontmatter: FrontmatterFields;
     children: BodyNode[];
     assets: string[];
@@ -99,12 +117,12 @@ export interface ParseResult {
     document: DocumentNode;
     diagnostics: Diagnostic[];
 }
-export type ThemeOverrideKey = "bg" | "surface" | "text" | "text-soft" | "accent" | "border" | "font-body" | "font-heading" | "radius";
-export type BlockType = "explainer" | "note" | "warning" | "concept" | "aside" | "pullquote" | "question" | "takeaway" | "timeline";
+export type ThemeOverrideKey = 'bg' | 'surface' | 'text' | 'text-soft' | 'accent' | 'border' | 'font-body' | 'font-heading' | 'radius';
+export type BlockType = 'explainer' | 'note' | 'warning' | 'concept' | 'aside' | 'pullquote' | 'question' | 'takeaway' | 'timeline';
 export interface TMDConfigThemeBlock {
-    "border-color"?: string;
-    "bg"?: string;
-    "marker-color"?: string;
+    'border-color'?: string;
+    'bg'?: string;
+    'marker-color'?: string;
 }
 export interface TMDConfigTheme {
     extends: string;
@@ -119,7 +137,7 @@ export interface TMDConfig {
 }
 export interface ResolvedConfig {
     theme: string;
-    compile: "standalone" | "fragment";
+    compile: 'standalone' | 'fragment';
     customThemes: Record<string, TMDConfigTheme>;
     allowExternalCSS: boolean;
 }

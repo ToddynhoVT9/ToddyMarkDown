@@ -1,4 +1,4 @@
-# ToddyMarkDown (`.tmd`) — tmd-cli-spec v1.1
+# ToddyMarkDown (`.tmd`) — tmd-cli-spec v1.2
 
 ## Objetivo
 
@@ -266,6 +266,7 @@ Cria um arquivo `.config.tmd.json` na raiz do diretório atual com valores padr�
 {
   "defaultTheme": "essay",
   "defaultCompile": "standalone",
+  "allowExternalCSS": false,
   "themes": {}
 }
 ```
@@ -302,10 +303,12 @@ Cria um arquivo `.config.tmd.json` na raiz do diretório atual com valores padr�
 ## Erro de parsing (exit 1)
 
 ```
-[ERRO] ensaio.tmd · linha 42 · PullQuote sem linha de citação entre aspas
+[ERRO] ensaio.tmd · 42:0 · PullQuote sem linha de citação entre aspas
 [OK]   dist/ensaio/ensaio.html  (compilado com bloco de erro embutido)
 [OK]   dist/ensaio/ensaio.css
 ```
+
+O formato de posição é `{linha}:{coluna}` — ambos referentes ao source normalizado (linha 1-based, coluna 0-based). Quando a posição não está disponível, omite o campo de posição.
 
 ## Erro fatal (exit 2)
 
@@ -345,10 +348,19 @@ Cria um arquivo `.config.tmd.json` na raiz do diretório atual com valores padr�
 | imagem encontrada | copiada para `dist/{slug}/img/` |
 | imagem não encontrada | erro no terminal + bloco de erro no HTML + exit 1 + continua |
 | arquivo `.tmd` novo adicionado durante `--watch` | ignorado |
+| `custom_css` com `allowExternalCSS: false` | warning no terminal + campo ignorado |
+| `custom_css` com arquivo não encontrado | warning no terminal + campo ignorado |
+| `custom_css` válido e habilitado | `<link>` extra injetado após CSS principal (só modo standalone) |
 
 ---
 
 # Changelog
+
+## v1.2
+- Formato de posição nos erros de terminal atualizado: `linha 42` → `42:0` (`{linha}:{coluna}`, convenção CM6 / LSP)
+- `tmd init` agora gera `allowExternalCSS: false` no `.config.tmd.json`
+- Comportamento de `custom_css` documentado: três casos (não permitido, arquivo ausente, válido)
+- Tabela de resumo atualizada com os três casos de `custom_css`
 
 ## v1.1
 - Seção de assets adicionada: cópia automática para `dist/{slug}/img/`, resolução relativa ao arquivo `.tmd`

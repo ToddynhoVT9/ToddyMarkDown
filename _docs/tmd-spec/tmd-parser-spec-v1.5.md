@@ -1,4 +1,4 @@
-# ToddyMarkDown (`.tmd`) — tmd-parser-spec v1.4
+# ToddyMarkDown (`.tmd`) — tmd-parser-spec v1.5
 
 ## Objetivo
 
@@ -63,6 +63,41 @@ Antes de qualquer parsing:
 
 Resultado: o parser trabalha sempre sobre uma sequência uniforme de linhas.
 
+### Saída do normalizador
+
+O normalizador retorna duas estruturas:
+
+```
+lines:       string[]   — array de linhas após normalização
+lineOffsets: number[]   — lineOffsets[i] = offset de caractere do início de lines[i]
+```
+
+`lineOffsets[0]` é sempre `0`. `lineOffsets[i]` é calculado no source já normalizado.
+
+**Helper `positionAt`** — único ponto do parser que constrói um `Position` a partir de índice de linha:
+
+```
+positionAt(lineIndex, column, lineOffsets) → { offset, line, column }
+  offset = lineOffsets[lineIndex] + column
+  line   = lineIndex + 1   (1-based)
+  column = column          (0-based)
+```
+
+### SourceRange — convenção de `end` exclusivo
+
+Todo nó AST e todo `Diagnostic` carrega um `SourceRange`:
+
+```
+SourceRange {
+  start: Position   // inclusive — aponta para o primeiro caractere
+  end:   Position   // exclusive — aponta para o caractere imediatamente após o fim
+}
+```
+
+A semântica de `end` exclusivo segue a convenção de CM6, LSP e tree-sitter. Na prática: `end` de uma linha `<|` é calculado como `positionAt(line, '<|'.length, lineOffsets)` — o offset do `\n` que termina a linha, não do `|`.
+
+> **Roadmap:** a convenção de offsets exclusivos foi escolhida para facilitar uma futura integração com `@lezer/lr` e `@codemirror/language`. Quando `@toddy/tmd-codemirror` for implementado, o `ParseResult` e os `position` dos nós mapeiam diretamente para `Decoration`, `RangeSet` e `@codemirror/lint` sem conversão. O parser atual é de passagem única; em versões futuras, `startParse` com suporte a `fragments` permitirá reparsing incremental por keystroke.
+
 ---
 
 ## 3. Detecção do frontmatter
@@ -90,6 +125,7 @@ theme: ...
 - chaves desconhecidas podem ser aceitas como metadado genérico ou gerar warning, conforme a política da implementação
 - o campo `theme` define o tema padrão de exibição; valores válidos são `essay`, `ink`, `modern`, `amber` e quaisquer temas customizados definidos no `.config.tmd.json`; valores inválidos ou ausentes fazem o compilador usar `essay`
 - o campo `compile` define o modo de saída; valores válidos são `standalone` e `fragment`; valores inválidos ou ausentes fazem o compilador usar `standalone`
+- o campo `custom_css` define um caminho para um arquivo CSS externo a ser injetado no HTML gerado; só tem efeito se `allowExternalCSS: true` estiver ativo no `.config.tmd.json`; ausente ou inativo → ignorado com warning
 - a precedência de configuração é: `.config.tmd.json` → frontmatter → padrão hardcoded
 
 ### Regex úteis
@@ -117,7 +153,12 @@ Linha simples de chave-valor:
     "kicker": "...",
     "author": "...",
     "theme": "essay",
-    "compile": "standalone"
+    "compile": "standalone",
+    "custom_css": "./themes/extra.css"
+  },
+  "position": {
+    "start": { "offset": 0, "line": 1, "column": 0 },
+    "end":   { "offset": 42, "line": 4, "column": 3 }
   }
 }
 ```
@@ -164,7 +205,11 @@ Fechamento:
 ```json
 {
   "type": "LiteralBlock",
-  "raw": "conteúdo bruto preservado"
+  "raw": "conteúdo bruto preservado",
+  "position": {
+    "start": { "offset": 10, "line": 3, "column": 0 },
+    "end":   { "offset": 45, "line": 6, "column": 2 }
+  }
 }
 ```
 
@@ -302,7 +347,11 @@ AST sugerida:
   "type": "PullQuoteBlock",
   "title": null,
   "quote": "texto da citação",
-  "author": "Gilbert Strang"
+  "author": "Gilbert Strang",
+  "position": {
+    "start": { "offset": 50, "line": 6, "column": 0 },
+    "end":   { "offset": 110, "line": 9, "column": 2 }
+  }
 }
 ```
 
@@ -313,7 +362,11 @@ AST sem autor (válido):
   "type": "PullQuoteBlock",
   "title": null,
   "quote": "texto da citação",
-  "author": null
+  "author": null,
+  "position": {
+    "start": { "offset": 50, "line": 6, "column": 0 },
+    "end":   { "offset": 95, "line": 8, "column": 2 }
+  }
 }
 ```
 
@@ -351,17 +404,33 @@ AST sugerida:
   "items": [
     {
       "type": "TimelineEvent",
-      "text": "1805 — acontecimento"
+      "text": "1805 — acontecimento",
+      "position": {
+        "start": { "offset": 200, "line": 20, "column": 0 },
+        "end":   { "offset": 228, "line": 20, "column": 28 }
+      }
     },
     {
       "type": "TimelineMarkdown",
-      "raw": "markdown intermediário"
+      "raw": "markdown intermediário",
+      "position": {
+        "start": { "offset": 229, "line": 21, "column": 0 },
+        "end":   { "offset": 252, "line": 21, "column": 22 }
+      }
     },
     {
       "type": "TimelineEvent",
-      "text": "1965 — acontecimento"
+      "text": "1965 — acontecimento",
+      "position": {
+        "start": { "offset": 253, "line": 22, "column": 0 },
+        "end":   { "offset": 281, "line": 22, "column": 28 }
+      }
     }
-  ]
+  ],
+  "position": {
+    "start": { "offset": 170, "line": 18, "column": 0 },
+    "end":   { "offset": 284, "line": 23, "column": 2 }
+  }
 }
 ```
 
@@ -426,9 +495,17 @@ Estratégia mais robusta — dividir em partes em vez de depender de uma regex �
   "content": [
     {
       "type": "MarkdownBlock",
-      "raw": "Gauss desenvolveu técnicas matemáticas extraordinárias."
+      "raw": "Gauss desenvolveu técnicas matemáticas extraordinárias.",
+      "position": {
+        "start": { "offset": 310, "line": 30, "column": 0 },
+        "end":   { "offset": 365, "line": 30, "column": 54 }
+      }
     }
-  ]
+  ],
+  "position": {
+    "start": { "offset": 290, "line": 29, "column": 0 },
+    "end":   { "offset": 368, "line": 31, "column": 2 }
+  }
 }
 ```
 
@@ -454,7 +531,11 @@ AST sugerida:
 ```json
 {
   "type": "MarkdownBlock",
-  "raw": "## seção\nparágrafo\n- item"
+  "raw": "## seção\nparágrafo\n- item",
+  "position": {
+    "start": { "offset": 0, "line": 1, "column": 0 },
+    "end":   { "offset": 26, "line": 3, "column": 6 }
+  }
 }
 ```
 
@@ -479,7 +560,11 @@ AST sugerida de alto nível:
   "children": [
     {
       "type": "MarkdownBlock",
-      "raw": "texto inicial"
+      "raw": "texto inicial",
+      "position": {
+        "start": { "offset": 60, "line": 7, "column": 0 },
+        "end":   { "offset": 74, "line": 7, "column": 13 }
+      }
     },
     {
       "type": "ExplainerBlock",
@@ -487,9 +572,17 @@ AST sugerida de alto nível:
       "content": [
         {
           "type": "MarkdownBlock",
-          "raw": "FFT é um método eficiente..."
+          "raw": "FFT é um método eficiente...",
+          "position": {
+            "start": { "offset": 100, "line": 10, "column": 0 },
+            "end":   { "offset": 128, "line": 10, "column": 27 }
+          }
         }
-      ]
+      ],
+      "position": {
+        "start": { "offset": 76, "line": 9, "column": 0 },
+        "end":   { "offset": 131, "line": 11, "column": 2 }
+      }
     },
     {
       "type": "ImageBlock",
@@ -500,11 +593,20 @@ AST sugerida de alto nível:
       "content": [
         {
           "type": "MarkdownBlock",
-          "raw": "texto do bloco"
+          "raw": "texto do bloco",
+          "position": {
+            "start": { "offset": 200, "line": 14, "column": 0 },
+            "end":   { "offset": 215, "line": 14, "column": 14 }
+          }
         }
-      ]
+      ],
+      "position": {
+        "start": { "offset": 133, "line": 13, "column": 0 },
+        "end":   { "offset": 218, "line": 15, "column": 2 }
+      }
     }
-  ]
+  ],
+  "assets": ["./img/gauss.jpg"]
 }
 ```
 
@@ -582,10 +684,27 @@ Representação visual no HTML compilado:
 {
   "type": "ErrorBlock",
   "raw": "conteúdo original preservado",
-  "error": "PullQuote sem linha de citação entre aspas",
-  "line": 42
+  "diagnostics": [
+    {
+      "severity": "error",
+      "code": "PULLQUOTE_NO_QUOTE",
+      "message": "PullQuote sem linha de citação entre aspas",
+      "position": {
+        "start": { "offset": 120, "line": 12, "column": 0 },
+        "end":   { "offset": 122, "line": 12, "column": 2 }
+      },
+      "filePath": "ensaio.tmd",
+      "recoverable": false
+    }
+  ],
+  "position": {
+    "start": { "offset": 100, "line": 10, "column": 0 },
+    "end":   { "offset": 145, "line": 14, "column": 2 }
+  }
 }
 ```
+
+`position.end` é sempre exclusivo — aponta para o offset imediatamente após o último caractere do bloco.
 
 ## Erros estruturais gerais
 
@@ -732,7 +851,11 @@ Gauss desenvolveu técnicas extraordinárias.
   "children": [
     {
       "type": "MarkdownBlock",
-      "raw": "## Introdução"
+      "raw": "## Introdução",
+      "position": {
+        "start": { "offset": 40, "line": 6, "column": 0 },
+        "end":   { "offset": 54, "line": 6, "column": 13 }
+      }
     },
     {
       "type": "ExplainerBlock",
@@ -740,15 +863,27 @@ Gauss desenvolveu técnicas extraordinárias.
       "content": [
         {
           "type": "MarkdownBlock",
-          "raw": "FFT é um método eficiente."
+          "raw": "FFT é um método eficiente.",
+          "position": {
+            "start": { "offset": 80, "line": 9, "column": 0 },
+            "end":   { "offset": 106, "line": 9, "column": 25 }
+          }
         }
-      ]
+      ],
+      "position": {
+        "start": { "offset": 56, "line": 8, "column": 0 },
+        "end":   { "offset": 109, "line": 10, "column": 2 }
+      }
     },
     {
       "type": "PullQuoteBlock",
       "title": null,
       "quote": "\"O algoritmo numérico mais importante de nossa vida.\"",
-      "author": "Gilbert Strang"
+      "author": "Gilbert Strang",
+      "position": {
+        "start": { "offset": 111, "line": 12, "column": 0 },
+        "end":   { "offset": 180, "line": 15, "column": 2 }
+      }
     },
     {
       "type": "ImageBlock",
@@ -759,11 +894,20 @@ Gauss desenvolveu técnicas extraordinárias.
       "content": [
         {
           "type": "MarkdownBlock",
-          "raw": "Gauss desenvolveu técnicas extraordinárias."
+          "raw": "Gauss desenvolveu técnicas extraordinárias.",
+          "position": {
+            "start": { "offset": 240, "line": 18, "column": 0 },
+            "end":   { "offset": 284, "line": 18, "column": 43 }
+          }
         }
-      ]
+      ],
+      "position": {
+        "start": { "offset": 182, "line": 17, "column": 0 },
+        "end":   { "offset": 287, "line": 19, "column": 2 }
+      }
     }
-  ]
+  ],
+  "assets": ["./img/gauss.jpg"]
 }
 ```
 
@@ -787,6 +931,15 @@ Em linguagem menos pomposa: a criatura precisa funcionar como ferramenta, não c
 ---
 
 # Changelog
+
+## v1.5
+- `position: SourceRange` adicionado a todos os nós AST, incluindo `TimelineEvent` e `TimelineMarkdown`
+- `SourceRange` com semântica de `end` exclusivo — convenção CM6 / LSP / tree-sitter
+- Seção de normalização expandida: `NormalizeResult` com `lineOffsets[]`, helper `positionAt`, contrato de `end` exclusivo
+- `ErrorBlock` atualizado: substitui `line: number` por `diagnostics: Diagnostic[]` com `position: SourceRange | null` em cada diagnostic
+- Campo `custom_css` adicionado ao frontmatter: caminho para CSS externo; só tem efeito com `allowExternalCSS: true` no config
+- Nota de roadmap adicionada: offsets exclusivos escolhidos para futura integração com `@lezer/lr` e `@codemirror/language`; parser incremental planejado para versão futura
+- Todos os exemplos de AST atualizados com `position` real
 
 ## v1.4
 - Erro 21 adicionado: caminho de imagem não encontrado no sistema de arquivos → `ErrorBlock` + terminal + exit 1 + continua

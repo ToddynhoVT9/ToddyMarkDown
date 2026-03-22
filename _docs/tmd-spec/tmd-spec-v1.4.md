@@ -1,4 +1,4 @@
-﻿# ToddyMarkDown (`.tmd`) — tmd-spec v1.3
+﻿# ToddyMarkDown (`.tmd`) — tmd-spec v1.4
 
 ## Visão geral
 
@@ -38,6 +38,8 @@ theme: essay
 - `kicker`
 - `author`
 - `theme`
+- `compile`
+- `custom_css`
 
 Todos opcionais.
 
@@ -55,6 +57,94 @@ amber    editor literário, íntimo e quente
 ```
 
 Se o campo `theme` estiver ausente ou for inválido, o compilador usa `essay` como padrão.
+
+### Campo `compile`
+
+O campo `compile` define o modo de saída do compilador para este documento.
+
+```txt
+standalone   documento HTML completo e autossuficiente (padrão)
+fragment     fragmento HTML para embutir em outro site
+```
+
+No modo `standalone`, o compilador gera um HTML completo com `<html>`, `<head>`, switcher de temas e script de persistência em `localStorage`.
+
+No modo `fragment`, gera apenas o `<article>` e seu conteúdo — sem DOCTYPE, sem switcher, sem script. O site que embute o fragmento é responsável por carregar o CSS e por gerenciar a troca de tema.
+
+Se ausente ou inválido, o compilador usa `standalone`. Pode ser sobrescrito por `defaultCompile` no `.config.tmd.json`.
+
+### Campo `custom_css`
+
+O campo `custom_css` define o caminho para um arquivo CSS externo a ser injetado no HTML gerado.
+
+```tmd
+---
+title: Meu Artigo
+custom_css: ./themes/extra.css
+---
+```
+
+**Condições de funcionamento:**
+
+- só tem efeito se `allowExternalCSS: true` estiver definido no `.config.tmd.json`
+- o caminho é resolvido relativo ao arquivo `.tmd`
+- se o arquivo não for encontrado, emite warning e o campo é ignorado
+- se `allowExternalCSS` for `false` ou ausente, o campo é ignorado com warning
+
+No modo `standalone`, o arquivo é injetado como `<link rel="stylesheet">` após o CSS principal gerado. No modo `fragment`, o campo é ignorado (o fragmento não controla `<head>`).
+
+---
+
+## Sistema de temas
+
+### Temas base (nível 0)
+
+Os quatro temas base são imutáveis e sempre gerados no CSS de saída:
+
+```txt
+essay    padrão — ensaio literário, austero, escuro
+ink      editorial clássico inspirado em jornal impresso
+modern   leitura digital contemporânea
+amber    editor literário, íntimo e quente
+```
+
+### Temas de projeto (níveis 1 e 2) — `.config.tmd.json`
+
+Temas customizados são definidos no `.config.tmd.json` e sempre herdam de um tema base via `extends`.
+
+**Nível 1 — variáveis globais (`overrides`):** permite sobrescrever 9 variáveis de aparência (cores, fontes, radius). Variáveis estruturais como `max-width` e `gap` são bloqueadas.
+
+**Nível 2 — por tipo de bloco (`blocks`):** permite customizar `border-color` e `bg` por tipo de bloco, e `marker-color` para timeline.
+
+```json
+{
+  "themes": {
+    "midnight": {
+      "extends": "essay",
+      "overrides": {
+        "bg": "#080810",
+        "accent": "#a78bfa"
+      },
+      "blocks": {
+        "warning":  { "border-color": "#e07b3a", "bg": "#1f1508" },
+        "timeline": { "marker-color": "#c8913a" }
+      }
+    }
+  }
+}
+```
+
+### CSS externo (nível 3)
+
+Para controle total, o `.config.tmd.json` pode habilitar CSS externo por documento:
+
+```json
+{
+  "allowExternalCSS": true
+}
+```
+
+Com isso ativo, o campo `custom_css` no frontmatter é respeitado. Sem isso, qualquer `custom_css` no frontmatter é ignorado silenciosamente com warning.
 
 ---
 
@@ -346,13 +436,29 @@ Exemplos de erros que geram este comportamento:
 
 # Compilador — comportamento de saída
 
-O compilador gera um único arquivo `.html` com os quatro temas embutidos.
+O compilador sempre gera dois arquivos: `{slug}.html` e `{slug}.css`.
 
-- Os quatro temas são carregados como conjuntos de variáveis CSS ativados por `data-theme` no elemento `<html>`
-- O tema padrão é definido pelo campo `theme` no frontmatter; na ausência do campo, usa `essay`
-- O tema ativo é persistido em `localStorage` entre sessões
-- O header do documento compilado contém um switcher com quatro botões (`essay`, `ink`, `modern`, `amber`)
-- O switcher herda as variáveis CSS do tema ativo (`var(--accent)`, `var(--text)`, `var(--border)` etc.) e se adapta automaticamente
+O modo de saída é controlado pelo campo `compile` no frontmatter (ou `defaultCompile` no `.config.tmd.json`).
+
+### Modo `standalone`
+
+- HTML completo com `<html>`, `<head>`, `<body>`
+- Switcher de temas no header com os 4 temas base e temas customizados
+- Script de persistência em `localStorage`
+- CSS scoped via `[data-theme]` no `<html>`
+
+### Modo `fragment`
+
+- Apenas o `<article class="tmd-document tmd-theme-{nome}">` e seu conteúdo
+- Sem DOCTYPE, sem `<head>`, sem switcher, sem script
+- CSS scoped via `.tmd-theme-{nome}` no `<article>`, evitando vazamento no site que o embute
+
+### Temas no CSS gerado
+
+- Os 4 temas base são sempre gerados
+- Temas customizados do `.config.tmd.json` são adicionados como blocos extras
+- O tema padrão é definido por `theme` no frontmatter; ausente ou inválido → `essay`
+- O tema ativo é persistido em `localStorage` (modo standalone)
 
 ---
 
@@ -376,6 +482,18 @@ Linha iniciada por `\` literal:
 ---
 
 # Changelog
+
+## v1.4
+- Campo `compile` adicionado ao frontmatter: `standalone` (padrão) e `fragment`; modos documentados com comportamento de saída
+- Campo `custom_css` adicionado ao frontmatter: CSS externo por documento; requer `allowExternalCSS: true` no config
+- Sistema de temas documentado em níveis: nível 0 (base imutável), nível 1 (`overrides`), nível 2 (`blocks`), nível 3 (CSS externo opt-in)
+- Seção "Compilador — comportamento de saída" reescrita: dois arquivos gerados, modos standalone e fragment, temas customizados
+- Exemplo de `.config.tmd.json` com `overrides` e `blocks` adicionado
+
+## v1.3
+- Campo `compile` adicionado ao frontmatter: valores `standalone` e `fragment`; ausente ou inválido → `standalone`
+- Regra de `theme` atualizada: aceita também temas customizados do `.config.tmd.json`
+- Precedência de configuração documentada: `.config.tmd.json` → frontmatter → padrão hardcoded
 
 ## v1.2
 - Sintaxe da família imagem atualizada: `|>*>`, `|>*>wrap`, `|>*<`, `|>*<wrap`

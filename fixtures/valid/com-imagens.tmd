@@ -1,0 +1,13 @@
+---
+title: Com Imagens
+---
+
+|>*> [Gauss] ![Retrato de Gauss](./img/gauss.jpg)
+Gauss desenvolveu técnicas extraordinárias.
+<|
+
+|>*<wrap [Espectro] ![Diagrama](./img/espectro.png)
+Texto que abraça a imagem à esquerda.
+<|
+
+Parágrafo com imagem inline: ![diagrama inline](./img/inline.png)

@@ -1,0 +1,54 @@
+---
+title: Todos os Blocos de Conteúdo
+author: Autor Teste
+theme: essay
+compile: standalone
+---
+
+## Introdução
+
+Texto de introdução.
+
+|>! [Explainer Básico]
+Texto de um explainer simples.
+<|
+
+|>@
+"Uma citação de teste."
+- Autor da Citação
+<|
+
+|>@ [Pullquote Sem Autor]
+"Uma citação sem autor."
+<|
+
+|>$
+Texto de um aside.
+<|
+
+|># [Nota Importante]
+Texto de uma nota.
+<|
+
+|>## [Aviso Crítico]
+Texto de um warning.
+<|
+
+|>? [Pergunta Reflexiva]
+Texto de uma questão.
+<|
+
+|>+
+Um takeaway de síntese.
+<|
+
+|>~~
+~~ Evento 1 ~~
+Descrição do evento 1.
+~~ Evento 2 ~~
+Descrição do evento 2.
+<|
+
+|>&
+Texto de um concept block.
+<|

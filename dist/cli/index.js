@@ -12,9 +12,8 @@ async function main() {
         const config = argAfter('--config', rest);
         const watch = rest.includes('--watch');
         if (watch) {
-            // Mock for future watch implementation in prompt09
-            printFatal('Modo watch não implementado ainda');
-            process.exit(2);
+            const { runWatchCommand } = await import('./watch-command.js');
+            runWatchCommand({ target, out, config }); // não chama process.exit — fica vivo
         }
         else {
             const { runCompileCommand } = await import('./compile-command.js');
@@ -25,9 +24,9 @@ async function main() {
         }
     }
     else if (command === 'init') {
-        // Mock for future init implementation in prompt09
-        printFatal('Modo init não implementado ainda');
-        process.exit(2);
+        const { runInitCommand } = await import('./init-command.js');
+        runInitCommand();
+        process.exit(0);
     }
     else {
         printFatal(`Comando desconhecido: ${command ?? '(nenhum)'}. Use: compile, init`);

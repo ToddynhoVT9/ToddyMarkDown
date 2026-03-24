@@ -42,3 +42,11 @@ export function printWatchEvent(event: string, p: string): void {
     console.log(`[WATCH] ${event}: ${p}`);
   }
 }
+
+export function printInitCreated(path: string): void {
+  console.log(`[OK]   ${path} criado`);
+}
+
+export function printInitExists(path: string): void {
+  console.warn(`[AVISO] ${path} já existe`);
+}

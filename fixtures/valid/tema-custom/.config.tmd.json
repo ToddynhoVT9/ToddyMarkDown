@@ -1,0 +1,18 @@
+{
+  "defaultTheme": "midnight",
+  "defaultCompile": "standalone",
+  "themes": {
+    "midnight": {
+      "extends": "essay",
+      "overrides": {
+        "bg":     "#080810",
+        "accent": "#a78bfa"
+      },
+      "blocks": {
+        "warning":  { "border-color": "#e07b3a", "bg": "#1f1508" },
+        "note":     { "border-color": "#5b8dd9", "bg": "#0d1520" },
+        "timeline": { "marker-color": "#c8913a" }
+      }
+    }
+  }
+}

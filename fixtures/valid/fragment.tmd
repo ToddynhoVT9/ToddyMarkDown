@@ -1,0 +1,9 @@
+---
+title: Artigo Fragment
+compile: fragment
+theme: modern
+---
+Conteúdo.
+|>! [Nota]
+Explainer.
+<|

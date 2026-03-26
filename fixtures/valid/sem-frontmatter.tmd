@@ -1,0 +1,2 @@
+Este documento não possui frontmatter.
+Deverá sofrer fallback para o defaultTheme configurado (ou essay se não tiver) e usar slug a partir do nome do arquivo `sem-frontmatter`.

@@ -1,0 +1,6 @@
+---
+title: Artigo com CSS Externo
+theme: essay
+custom_css: ./extra.css
+---
+Texto.

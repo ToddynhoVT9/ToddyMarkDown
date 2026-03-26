@@ -1,0 +1,57 @@
+---
+title: Essay Completo
+kicker: Tudo num lugar
+theme: essay
+---
+
+# Introdução
+Este é um documento de teste.
+
+|-|
+| | Título da tabela |
+| Coluna 1 | Coluna 2 |
+|-|
+
+|>! [Nota]
+Isto é um block de note.
+<|
+
+|>## [Aviso]
+Este é um block de warning!
+<|
+
+|>@
+"Uma citação direta muito profunda."
+- Autor Desconhecido
+<|
+
+|>~~ [Timeline Especial]
+~~ 2024 ~~
+Aqui temos uma timeline legal
+<|
+
+|>$ [Aside]
+Um explainer ou side note.
+<|
+
+|>& [Concept]
+E aqui está um concept.
+<|
+
+|>+ [Takeaway]
+Exemplo de PRÓS e CONTRAS.
+<|
+
+![Image Default](img/default.jpg)
+!>[Image Wide](img/wide.jpg)
+!>>[Image Full](img/full.jpg)
+!><[Image Float](img/float.jpg)
+
+Aqui está um bloco literal:
+/>
+|>! [Aviso]
+Isso não deve ser parseado!
+<|
+<\
+
+E aqui um escape visual: \!>!

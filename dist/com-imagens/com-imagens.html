@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="essay">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Com Imagens</title>
+  <link rel="stylesheet" href="com-imagens.css" />
+</head>
+<body>
+  <header class="tmd-site-header">
+    <div class="tmd-theme-switcher">
+      <button class="tmd-theme-btn" data-theme-target="essay">essay</button>
+      <button class="tmd-theme-btn" data-theme-target="ink">ink</button>
+      <button class="tmd-theme-btn" data-theme-target="modern">modern</button>
+      <button class="tmd-theme-btn" data-theme-target="amber">amber</button>
+    </div>
+  </header>
+  <article class="tmd-document">
+    <header class="tmd-header">
+      <h1 class="tmd-title">Com Imagens</h1>
+    </header>
+    <main class="tmd-body"><section class="tmd-markdown"></section>
+<section class="tmd-media-block tmd-media-block-right">
+  <h3 class="tmd-block-title">Gauss</h3>
+  <div class="tmd-media-block-inner">
+    <div class="tmd-media-content"><section class="tmd-markdown"><p>Gauss desenvolveu técnicas extraordinárias.</p>
+</section></div>
+    <figure class="tmd-media-figure">
+    <div class="tmd-error-block tmd-error-block-image">
+  <span class="tmd-error-marker">--ERROR BLOC--</span>
+  <pre class="tmd-error-raw">./img/gauss.jpg</pre>
+  <span class="tmd-error-marker">--ERROR BLOC--</span>
+</div>
+    <figcaption class="tmd-media-caption">Retrato de Gauss</figcaption>
+  </figure>
+  </div>
+</section>
+<section class="tmd-markdown"></section>
+<section class="tmd-media-wrap tmd-media-wrap-left">
+  <h3 class="tmd-block-title">Espectro</h3>
+  <figure class="tmd-media-figure tmd-media-float-left">
+    <img src="./img/espectro.png" alt="Diagrama" class="tmd-media-image" />
+    <figcaption class="tmd-media-caption">Diagrama</figcaption>
+  </figure>
+  <div class="tmd-media-content"><section class="tmd-markdown"><p>Texto que abraça a imagem à esquerda.Buraco negro é um objeto astronômico denso e massivo cujo intenso campo gravitacional impede qualquer coisa de escapar, inclusive a luz.[6] A teoria da relatividade geral prevê que uma massa suficientemente compacta pode deformar o espaço-tempo para formar um buraco negro.[7][8] O limite da região da qual não é possível escapar é chamado de horizonte de eventos e que, embora o horizonte de eventos tenha um efeito enorme sobre o destino e as circunstâncias de um objeto que o atravessa, não tem nenhuma característica local detectável.[9] De muitas maneiras, um buraco negro age como um corpo negro ideal, pois não reflete luz.[10][11] A teoria quântica de campos no espaço-tempo curvo prevê que os horizontes de eventos emitem radiação Hawking, com o mesmo espectro que um corpo negro de temperatura inversamente proporcional à sua massa. Essa temperatura é da ordem dos bilionésimos de um kelvin para buracos negros de massa estelar, o que a torna praticamente impossível de observar.Objetos cujos campos gravitacionais são fortes demais para a luz escapar foram considerados pela primeira vez no século XVIII por John Michell e Pierre-Simon Laplace.[12] A primeira solução moderna da relatividade geral que caracterizaria um buraco negro foi encontrada por Karl Schwarzschild em 1916, embora sua interpretação como uma região do espaço da qual nada possa escapar tenha sido publicada pela primeira vez por David Finkelstein em 1958. Os buracos negros eram há muito considerados uma curiosidade matemática; foi na década de 1960 que o trabalho teórico mostrou que eram uma previsão genérica da relatividade geral. A descoberta de estrelas de nêutrons por Jocelyn Bell Burnell em 1967 despertou o interesse em objetos compactos em colapso gravitacional como uma possível realidade astrofísica.Espera-se a formação de buracos negros de massa estelar quando estrelas muito massivas colapsam no final de seu ciclo de vida. Um buraco negro pode se formar também a partir da condensação de nuvens de gás.[13] Uma descoberta de novembro de 2023 é consistente com essa hipótese.[14] Após a formação de um buraco negro, ele pode continuar a crescer absorvendo a massa do ambiente. Ao absorver outras estrelas e se fundir com outros buracos negros, buracos negros supermassivos de milhões de massas solares (M☉) podem se formar. Há consenso de que existem buracos negros supermassivos no centro da maioria das galáxias. A presença de um buraco negro pode ser inferida por meio da interação com outra matéria e com radiação eletromagnética, como a luz visível. A matéria que cai em um buraco negro pode formar um disco de acreção externa aquecido por fricção, formando alguns dos objetos mais brilhantes do universo. Se houver outras estrelas orbitando um buraco negro, suas órbitas podem ser usadas para determinar a massa e a localização do buraco negro. Tais observações podem ser usadas para excluir possíveis alternativas, como estrelas de nêutrons. Dessa maneira, os astrônomos identificaram inúmeros candidatos a buracos negros estelares em sistemas binários e estabeleceram que a fonte de rádio conhecida como Sagitário A*, no núcleo da Via Láctea, contém um buraco negro supermassivo de cerca de 4,3 milhões de massas solares.</p>
+</section></div>
+  <div class="tmd-clearfix"></div>
+</section>
+<section class="tmd-markdown"><p>Parágrafo com imagem inline: <div class="tmd-error-block tmd-error-block-image">
+  <span class="tmd-error-marker">--ERROR BLOC--</span>
+  <pre class="tmd-error-raw">./img/inline.png</pre>
+  <span class="tmd-error-marker">--ERROR BLOC--</span>
+</div></p>
+</section></main>
+  </article>
+  <script>
+    const saved = localStorage.getItem('tmd-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    document.querySelectorAll('.tmd-theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const t = btn.dataset.themeTarget;
+        document.documentElement.setAttribute('data-theme', t);
+        localStorage.setItem('tmd-theme', t);
+      });
+    });
+  </script>
+</body>
+</html>
